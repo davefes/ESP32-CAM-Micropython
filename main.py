@@ -39,8 +39,8 @@ from mail_image import send_mail
 from wifi_functions import connect
 from wifi_functions import disconnect
 import esp32
-from watchdog_timer import wdt_callback
-from watchdog_timer import wdt_feed
+#from watchdog_timer import wdt_callback
+#from watchdog_timer import wdt_feed
 
 
 wake_source = Pin(13, Pin.IN) #  setting wake up pin
