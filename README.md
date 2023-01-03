@@ -19,5 +19,5 @@ N.B.  do a config.poweron_reset.on() instead of a machine.reset() or the camera 
 
 Have also included a schematic for a IR receiver and the poweron_reset circuits.
 
-
+Do not need to import wdt_callback().  Also, as soon as you import wdt_feed the watchdog starts running.
  
