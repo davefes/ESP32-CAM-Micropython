@@ -30,7 +30,8 @@
 
 
 import camera
-from machine import Pin, WDT, lightsleep
+from umachine import Pin, WDT, lightsleep
+import umachine
 import utime
 import gc
 import config
@@ -47,7 +48,7 @@ wake_source = Pin(13, Pin.IN) #  setting wake up pin
 esp32.wake_on_ext0(pin = wake_source, level = esp32.WAKEUP_ANY_HIGH)  #  initialising wake up
 flash_light = Pin(4,Pin.OUT)
 flash_light.off()
-config.poweron_reset.off()
+
 
 
 #  Software WDT set for 80 seconds
@@ -158,14 +159,14 @@ def main():
                 disconnect()
 
               # start all over again
-                config.poweron_reset.on()
+                umachine.reset()
 
             else:
                 print (f'not a valid jpeg file')
                 utime.sleep(5)
 
              #  start all over again
-                config.poweron_reset.on()
+                umachine.reset()
 
         else: #  pat the dogs
             print ('pat the dogs')
@@ -177,7 +178,7 @@ def main():
  #  end of while loop
 
  #  if it gets out of the loop
-    config.poweron_reset.on()
+    umachine.reset()
 
 
 if __name__ == '__main__':
