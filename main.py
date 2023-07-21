@@ -155,7 +155,7 @@ def main():
                 utime.sleep(1)
                 send_alarm (config.host, config.port)
                 utime.sleep(1)
-                send_mail({'to': 'dave.festing@gmail.com', 'subject': 'Message from camera', 'text': 'check this out'}, {'bytes' : img, 'name' : 'img.jpeg'})
+                send_mail({'to': 'your_email@gmail.com', 'subject': 'Message from camera', 'text': 'check this out'}, {'bytes' : img, 'name' : 'img.jpeg'})
                 disconnect()
 
               # start all over again
