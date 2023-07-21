@@ -25,7 +25,7 @@
 
 
 
-#  get a buffer protocol required error if you don't do a poweron_reset.on()
+#  get a buffer protocol required error if you don't do a umachine.reset()
 #  uncomment all the watchdog stuff if you want an extra layer of reliability
 
 
