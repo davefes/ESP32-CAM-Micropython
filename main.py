@@ -65,13 +65,9 @@ def main():
 
     camera.init()
 
- #  can NOT have any delays in here??
-
- #  framesize 14, quality 10 and speffect 2 seems OK, most of the time
-
  #  camera settings
     camera.pixformat(0) #  0:JPEG, 1:Grayscale (2bytes/pixel), 2:RGB565
-    camera.framesize(10) #  1:96x96, 2:160x120, 3:176x144, 4:240x176, 5:240x240
+    camera.framesize(11) #  1:96x96, 2:160x120, 3:176x144, 4:240x176, 5:240x240
                          #  6:320x240, 7:400x296, 8:480x320, 9:640x480, 10:800x600
                          #  11:1024x768, 12:1280x720, 13:1280x1024, 14:1600x1200
                          #  15:1920x1080, 16:720x1280, 17:864x1536, 18:2048x1536
@@ -87,7 +83,7 @@ def main():
 #    camera.agcgain(0)  #  [0,30] AGC Gain: Automatic Gain Control
 
     print ('waiting 5 seconds so you can do a CTRL-C')
-    utime.sleep(5)
+    utime.sleep(5)  # this wait period is also important for camera setup
 
 
     while True:
