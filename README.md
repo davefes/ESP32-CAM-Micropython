@@ -17,7 +17,7 @@ I found that trying to increase framesize and/or improve the quality could resul
 
 You need to do a umachine.reset() at the start or the camera will not be properly initialised.
 
-Have also included a schematic for a IR receiver and the poweron_reset circuits.  Forget about using poweron_reset, use umachine.reset() instead.
+Sometimes the ESP32-CAM does not seem to initialise properly with umachine.reset(). Have added an updated schematic for a IR receiver and a poweron_reset circuit.
 
 Do not need to import wdt_callback().  Also, as soon as you import wdt_feed the watchdog starts running.
  
