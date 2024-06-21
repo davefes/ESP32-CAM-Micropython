@@ -18,5 +18,6 @@ I found that trying to increase framesize and/or improve the quality could resul
 You need to do a umachine.reset() at the start or the camera will not be properly initialised.
 
 Sometimes the ESP32-CAM does not seem to initialise properly with umachine.reset(). Have added an updated schematic for a IR receiver and a poweron_reset circuit.
-A BC548 works but may not be a good choice.  I am trying a DMOS FET with a gate threshold of 1.5V, ie the ZVNL110A.
+
+There could still be issues with using lightsleep and taking subsequent pictures.  The poweron_reset circuit seems to help.  Good luck!
  
