@@ -19,5 +19,5 @@ You need to do a umachine.reset() at the start or the camera will not be properl
 
 Sometimes the ESP32-CAM does not seem to initialise properly with umachine.reset(). Have added an updated schematic for a IR receiver and a poweron_reset circuit.
 
-There could still be issues with using lightsleep and taking subsequent pictures.  The poweron_reset circuit seems to help.  Good luck!
+With lightsleep and taking subsequent pictures,  I still get the odd over-exposed picture.  Good luck!
  
