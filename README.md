@@ -1,7 +1,7 @@
 README.md 
 ESP-CAM-Micropython
 
-This project uses the latest firmware version of esp32-cam-micropython-2022 at:
+This project uses version esp32-cam-micropython-2022 at:
 https://github.com/shariltumin/esp32-cam-micropython-2022/tree/main/firmware-20221203
 with uMail found at:
 https://github.com/shawwwn/uMail
@@ -15,9 +15,9 @@ On the ESP32-CAM board the standby current was about 150mA, with the camera init
 Two 18650 Li-ion cells and a 5W 6V PV panel is probably adequate for remote use.
 I found that trying to increase framesize and/or improve the quality could result in poor images, some of the time.
 
-You need to do a umachine.reset() at the start or the camera will not be properly initialised.
+You need to do a machine.reset() at the start or the camera will not be properly initialised.
 
-Sometimes the ESP32-CAM does not seem to initialise properly with umachine.reset(). Have added an updated schematic for a IR receiver and a poweron_reset circuit.
+Sometimes the ESP32-CAM does not seem to initialise properly with machine.reset(). Have added an updated schematic for a IR receiver and a poweron_reset circuit.
 
-With lightsleep and taking subsequent pictures,  I still get the odd over-exposed picture.  Good luck!
+With lightsleep and taking subsequent pictures, I still get the odd over-exposed picture.
  
