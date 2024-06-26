@@ -21,16 +21,7 @@
 # THE SOFTWARE.
 
 
-# V2 21 June 2024
-
-#  get a buffer protocol required error if you don't do a machine.reset()
-#  or a poweron_reset()
-#  flash_light disconnected as putting 4V or 3V3 on the line down the edge
-#  of the board caused 80mA pulses of current.  That 3V3 line is right close
-#  to the UART TX line and maybe some form of oscillation was taking place
-#  not on the 2nd board
-
-#  21 June 2024 D. Festing
+#  27 June 2024 D. Festing
 
 
 import camera
@@ -66,11 +57,12 @@ poweron_reset.off()
 #wdt = WDT(timeout = 100000)
 
 if machine.reset_cause() == machine.SOFT_RESET:
-    print('doing a poweron_reset(), ignore Brownout msg')
+    print('doing a machine.reset()')
 
-    poweron_reset.on()
+    machine.reset()
+#    poweron_reset.on()
 
-print('waiting 2 seconds so that I can do a CTRL-C')
+print('\nwaiting 2 seconds so that I can do a CTRL-C')
 time.sleep(2)
 
 
@@ -78,9 +70,18 @@ def main():
 #    wdt_feed()
 #    wdt.feed()
 
-    gc.collect()
-
-    camera.init()
+  # wait for camera ready
+    for i in range(5):
+        cam = camera.init()
+        print("Camera ready?: ", cam)
+        if cam:
+            break
+        else:
+            time.sleep(2)
+    else:
+        print('Timeout')
+ #       poweron_reset()
+        machine.reset()
 
   # camera settings
     camera.pixformat(0)   # 0:JPEG, 1:Grayscale (2bytes/pixel), 2:RGB565
@@ -98,9 +99,6 @@ def main():
 #    camera.aelevels(0)  # [-2,2] AE Level: Automatic exposure
 #    camera.aecvalue(0)  # [0,1200] AEC Value: Automatic exposure control
 #    camera.agcgain(0)   # [0,30] AGC Gain: Automatic Gain Control
-
-    print ('waiting 5 seconds for camera setup')
-    time.sleep(5)
 
 
     while True:
@@ -126,15 +124,18 @@ def main():
 #        if 1 == 1:  # for testing
         if (wake_source.value() == 1):
             print ('you got a valid trigger')
-            time.sleep_ms(5)
+
+          # wait for vehicle to get in the right position
+            time.sleep_ms(750)
 
             big_flash_light.on()
 
-            time.sleep_ms(250)  # takes more than 100ms for BIG flash to come up
+          # wait for flash to come up
+            time.sleep_ms(250)
 
             img = camera.capture()
 
-#            time.sleep_ms(250)  # probably not needed
+            time.sleep_ms(100)
 
             big_flash_light.off()
 
@@ -185,21 +186,24 @@ def main():
                 disconnect()
 
                 print('image sent')
-                time.sleep_ms(10)
+                time.sleep_ms(5)
 
               # start all over again
                 print('doing a poweron_reset(), ignore Brownout msg')
 
-                poweron_reset.on()
+                machine.reset()
+#                poweron_reset.on()
 
             else:
                 print ('not a valid jpeg file')
-                time.sleep(1)
+                time.sleep_ms(5)
 
               # start all over again
                 print('doing a poweron_reset(), ignore Brownout msg')
+                time.sleep_ms(5)
 
-                poweron_reset.on()
+                machine.reset()
+#                poweron_reset.on()
 
 #        else:  # pat the dogs
 #            print ('pat the dogs')
@@ -211,7 +215,8 @@ def main():
   # end of while loop
 
   # if it gets out of the loop
-    poweron_reset.on()
+#    poweron_reset.on()
+    machine.reset()
 
 
 if __name__ == '__main__':
