@@ -18,6 +18,6 @@ You need to do a machine.reset() at the start, if doing a CTRL-C or the camera w
 
 Found a camera.init() that waits for completion.
 https://github.com/shariltumin/esp32-cam-micropython-2022/blob/main/webcam.py
-This might remove the necessity for a long wait period after changing the camera settings 
+This might remove the necessity for a long wait period after changing the camera settings ... still needs the 5 seconds.
 
-You can probably ignore the poweron_reset circuitry in ESP32_CAM_IR.pdf
+I am not convinced that a machine.reset() is adequate to properly init the camera when lightsleep() is involved.
