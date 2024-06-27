@@ -21,7 +21,7 @@
 # THE SOFTWARE.
 
 
-#  27 June 2024 D. Festing
+#  27 June 2024
 
 
 import camera
@@ -57,12 +57,13 @@ poweron_reset.off()
 #wdt = WDT(timeout = 100000)
 
 if machine.reset_cause() == machine.SOFT_RESET:
-    print('doing a machine.reset()')
+    print('doing a system reset')
+    time.sleep_ms(5)
+#    machine.reset()
+    poweron_reset.on()
+    time.sleep_ms(5)  # so the following is not printed
 
-    machine.reset()
-#    poweron_reset.on()
-
-print('\nwaiting 2 seconds so that I can do a CTRL-C')
+print('\n\nwaiting 2 seconds so that I can do a CTRL-C')
 time.sleep(2)
 
 
@@ -79,9 +80,11 @@ def main():
         else:
             time.sleep(2)
     else:
-        print('Timeout')
- #       poweron_reset()
-        machine.reset()
+        print('Timeout, doing a poweron_reset')
+        time.sleep_ms(5)
+
+        poweron_reset()
+#        machine.reset()
 
   # camera settings
     camera.pixformat(0)   # 0:JPEG, 1:Grayscale (2bytes/pixel), 2:RGB565
@@ -100,6 +103,10 @@ def main():
 #    camera.aecvalue(0)  # [0,1200] AEC Value: Automatic exposure control
 #    camera.agcgain(0)   # [0,30] AGC Gain: Automatic Gain Control
 
+  # camera seems to need some more time to setup after changing the settings
+    print('camera setting-up')
+    time.sleep(5)
+
 
     while True:
         print ('going to lightsleep FOREVER')
@@ -114,6 +121,8 @@ def main():
 
         lightsleep()
 
+# if using watchdogs ... lightsleep(60000)
+
         flash_light.init(hold=False)
         big_flash_light.init(hold=False)
         poweron_reset.init(hold=False)
@@ -126,7 +135,7 @@ def main():
             print ('you got a valid trigger')
 
           # wait for vehicle to get in the right position
-            time.sleep_ms(750)
+            time.sleep_ms(500)
 
             big_flash_light.on()
 
@@ -189,21 +198,21 @@ def main():
                 time.sleep_ms(5)
 
               # start all over again
-                print('doing a poweron_reset(), ignore Brownout msg')
-
-                machine.reset()
-#                poweron_reset.on()
-
+                print('doing a system reset')
+                time.sleep_ms(5)
+#                machine.reset()
+                poweron_reset.on()
+                time.sleep(5)
             else:
                 print ('not a valid jpeg file')
                 time.sleep_ms(5)
 
               # start all over again
-                print('doing a poweron_reset(), ignore Brownout msg')
+                print('doing a system reset')
                 time.sleep_ms(5)
-
-                machine.reset()
-#                poweron_reset.on()
+#                machine.reset()
+                poweron_reset.on()
+                time.sleep_ms(5)
 
 #        else:  # pat the dogs
 #            print ('pat the dogs')
@@ -214,9 +223,11 @@ def main():
 
   # end of while loop
 
-  # if it gets out of the loop
-#    poweron_reset.on()
-    machine.reset()
+  # if it gets out of the loop, do a system reset
+    time.sleep_ms(5)
+#    machine.reset()
+    poweron_reset.on()
+    time.sleep_ms(5)
 
 
 if __name__ == '__main__':
