@@ -14,10 +14,10 @@ It was found that doing camera.init() and changing any camera settings that you 
 On the ESP32-CAM board the standby current was about 150mA, with the camera initialised.  Initialising the camera, going to lightsleep() and removing the 3V3 regulator got that current down to around 25mA.
 Two 18650 Li-ion cells and a 5W 6V PV panel is probably adequate for remote use.
 
-You need to do a machine.reset() at the start, if doing a CTRL-C or the camera will not be properly initialised.
+You need to do a system reset at the start, if doing a CTRL-C or the camera will not be properly initialised.
 
 Found a camera.init() that waits for completion.
 https://github.com/shariltumin/esp32-cam-micropython-2022/blob/main/webcam.py
-This might remove the necessity for a long wait period after changing the camera settings ... still needs the 5 seconds.
+This might remove the necessity for a long wait period after changing the camera settings ... nope, still needs the 5 second delay.
 
 I am not convinced that a machine.reset() is adequate to properly init the camera when lightsleep() is involved.
