@@ -18,6 +18,5 @@ You need to do a system reset at the start, if doing a CTRL-C or the camera will
 
 Found a camera.init() that waits for completion.
 https://github.com/shariltumin/esp32-cam-micropython-2022/blob/main/webcam.py
-This might remove the necessity for a long wait period after changing the camera settings ... nope, still needs the 5 second delay.
 
 I am not convinced that a machine.reset() is adequate to properly init the camera when lightsleep() is involved.
