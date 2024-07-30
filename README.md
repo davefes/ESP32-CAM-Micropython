@@ -20,3 +20,5 @@ Found a camera.init() that waits for completion. https://github.com/shariltumin/
 This script uses lightsleep as I thought it would wake up and take the image in less time then a full re-boot fron deepsleep. Lightsleep to image capture is about 1.5 seconds.  Deepsleep takes about 2 seconds.  Lightsleep current is about 15mA and deepsleep current is about 7mA.
 
 Freezing the application might help to reduce this delay.
+
+Ignore all the power_reset circuitry in ESP32_CAM_IR.pdf
