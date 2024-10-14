@@ -15,4 +15,4 @@ WiFi_device = '192.168.8.80'
 host = '192.168.8.75'
 port = 8090
 
-poweron_reset = Pin(12, Pin.OUT) #  poweron_reset drive
+poweron_reset = Pin(2, Pin.OUT) #  poweron_reset drive
