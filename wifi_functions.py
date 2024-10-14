@@ -1,6 +1,6 @@
 # The MIT License (MIT)
 #
-# Copyright (c) 2022 David Festing
+# Copyright (c) 2024 David Festing
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -21,13 +21,10 @@
 # THE SOFTWARE.
 
 
-# V1 29 Dec 2022
-
-
 import network
 import utime
 import config
-import machine
+from machine import Pin
 
 
 sta_if = network.WLAN(network.STA_IF)
@@ -53,16 +50,19 @@ def connect():
         utime.sleep(0.1)
 
         try:
-            sta_if.ifconfig((config.WiFi_device, '255.255.255.0', config.gateway, '8.8.8.8'))
             sta_if.connect(config.hotspot, config.password)
+            sta_if.ifconfig((config.WiFi_device, '255.255.255.0', config.gateway, '8.8.8.8'))
         except OSError as error:
+#            pass
             try:
                 with open('errors.txt', 'a') as outfile:
                     outfile.write(str(error) + '\n')
             except OSError:
                 pass
 
-        while (count < 5):
+        sta_if.config(pm=sta_if.PM_NONE)
+
+        while (count < 10):
             count += 1
 
             if (sta_if.isconnected()):
@@ -76,7 +76,7 @@ def connect():
             utime.sleep(1)
 
 
-    if (count == 5):
+    if (count == 10):
         try:
             with open('errors.txt', 'a') as outfile:
                 outfile.write('failed to connect after 5 tries' + '\n')
