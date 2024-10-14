@@ -9,8 +9,4 @@ You need to do a system reset at the start, if doing a CTRL-C or the camera will
 
 Found a camera.init() that waits for completion. https://github.com/shariltumin/esp32-cam-micropython-2022/blob/main/webcam.py
 
-This script uses lightsleep as I thought it would wake up and take the image in less time then a full re-boot fron deepsleep. Lightsleep to image capture is about 1.5 seconds.  Deepsleep takes about 2 seconds.  Lightsleep current is about 15mA and deepsleep current is about 7mA.
-
-Freezing the application might help to reduce this delay.
-
-Ignore all the power_reset circuitry in ESP32_CAM_IR.pdf
+I also found that some cameras need a full poweron_reset to stop `camera probe fails`  See ESP32_poweron.pdf
