@@ -21,35 +21,46 @@
 # THE SOFTWARE.
 
 
-#  30 June 2024
+# ESP32-CAM using a normal camera
 
-from machine import Pin, lightsleep
+# - take two unwanted pictures, wait a total of 100ms
+#   and then take the real picture
+
+# 14 Oct 2024 D. Festing
+
+
+from machine import Pin
 import machine
 import time
 import config
-import esp32
-import camera
 from my_sender import send_alarm
 from mail_image import send_mail
 from wifi_functions import connect, disconnect
+import gc
 
 
-wake_source = Pin(13, Pin.IN)  # setting wake up pin
-esp32.wake_on_ext0(pin = wake_source, level = esp32.WAKEUP_ANY_HIGH)  # initialising wake up
-big_flash = Pin(15, Pin.OUT, value=1)  # inverted logic
+gc.collect()
 
-if machine.reset_cause() ==  machine.SOFT_RESET:
-    print('doing a machine.reset()')
+trigger = Pin(13, Pin.IN)  # setting trigger pin
+
+if machine.reset_cause() == machine.SOFT_RESET:
+    print('doing a poweron_reset()')
     time.sleep_ms(5)
-    machine.reset()
+    config.poweron_reset.on()
 
 print('wait 2 seconds to allow a CTRL-C')
 time.sleep(2)
 
+if config.watchdog is True:
+    from watchdog import wdt_init, wdt_feed
+
+  # SW/WDT set for 90 seconds
+    wdt_init(90)
+    wdt_feed()
+
 pix = const(17)
 frame = const(18)
 
-# PIXEL FORMAT
 PIXFORMAT = {
     'RGB565':1,    # 2BPP/RGB565
     'YUV422':2,    # 2BPP/YUV422
@@ -62,7 +73,6 @@ PIXFORMAT = {
     'RGB555':9,    # 3BP2P/RGB555
 }
 
-# FRAME SIZE
 FRAMESIZE = {
      '96X96':1,   # 96x96
      'QQVGA':2,   # 160x120
@@ -92,105 +102,135 @@ import camera  # do this after the above machine.reset()
 camera.conf(pix, n)    # set pixelformat
 camera.conf(frame, s)  # set framesize
 
+# wait for camera ready
+for i in range(5):
+    cam = camera.init()
+    print("Camera ready?: ", cam)
+    if cam:
+        break
+    else:
+        time.sleep(1)
+else:
+    print('Timeout, doing a poweron_reset()')
+    time.sleep_ms(5)
+
+    config.poweron_reset.on()
+
+# other settings after camera.init()
+camera.quality(5)
+camera.brightness(-2)
+
+config.cam_state = True
+
 
 def main():
     while True:
-        print ('going to lightsleep')
-        time.sleep_ms(5)
+        if trigger.value() == 1:
+            print('taking a picture')
+            time.sleep_ms(10)
 
-        big_flash.init(hold=True)
+          # throw-away two images, this sets
+          # the camera up for a proper picture
+            unwanted_img = camera.capture()
 
-        lightsleep()  # FOREVER
+            time.sleep_ms(100)
 
-        big_flash.init(hold=False)
+            unwanted_img = camera.capture()
 
-      # wait for camera ready
-        for i in range(5):
-            cam = camera.init()
-            print("Camera ready?: ", cam)
-            if cam:
-                break
-            else:
-                time.sleep(1)
-        else:
-            print('Timeout, doing a machine.reset()')
-            time.sleep_ms(5)
+            time.sleep_ms(100)
 
-            machine.reset()
-
-      # other settings after camera.init()
-        camera.quality(5)
-
-        big_flash.off()  # inverted logic
-        time.sleep_ms(100)  # wait for flash to warm-up
-
-      # take 5 to 10 frames, rejecting the first 4 or 9!!
-        for x in range(5):
             img = camera.capture()
-            time.sleep_ms(50)
 
-        print('picture taken')
-        time.sleep_ms(10)
+            print('picture taken')
+            time.sleep_ms(10)
 
-        big_flash.on()  # inverted logic
+            camera.deinit()
 
-        camera.deinit()
+            config.cam_state = False
 
-      # save image
-        with open('image.jpeg', 'wb') as outfile:
-            outfile.write(img)
+          # save image
+            with open('image.jpeg', 'wb') as outfile:
+                outfile.write(img)
 
-      # valid jpeg ending
-        valid_jpeg = b'\xff\xd9'
+          # valid jpeg ending
+            valid_jpeg = b'\xff\xd9'
 
-      # now check for the correct ending
-        with open('image.jpeg', 'rb') as file:
-            try:
-                file.seek(-2, 2)
-                while file.read(1) != b'\n':
-                    file.seek(-2, 1)
-            except Exception as e:
-                file.seek(0)
+          # now check for the correct ending
+            with open('image.jpeg', 'rb') as file:
+                try:
+                    file.seek(-2, 2)
 
-            last_line = file.readline()
+                    while file.read(1) != b'\n':
+                        file.seek(-2, 1)
+                except Exception as e:
+                    file.seek(0)
 
-        last_chars = last_line[-2:]
-#        print (f'Last 2 characters : {last_chars}')
-        time.sleep_ms(5)
+                last_line = file.readline()
 
-        if (last_chars == valid_jpeg):
-#            print ('you got a jpeg image')
+            last_chars = last_line[-2:]
+#            print (f'Last 2 characters : {last_chars}')
             time.sleep_ms(5)
 
-            gc.collect()
+            if (last_chars == valid_jpeg):
+#                print ('you got a jpeg image')
+                time.sleep_ms(5)
 
-            connect()
-            time.sleep(1)
+                gc.collect()
 
-            print ('send alarm')
-            time.sleep_ms(5)
+                if config.watchdog is True:
+                    wdt_feed()
 
-            send_alarm (config.host, config.port)
-            time.sleep(1)
+                connect()
+                time.sleep(1)
 
-            print ('send image')
-            time.sleep_ms(5)
+                config.wifi_state = True
 
-            send_mail({'to': 'xyz@gmail.com', 'subject': 'Message from gate camera', 'text': 'check this out'}, {'bytes' : img, 'name' : 'img.jpeg'})
+#                print ('send alarm')
+#                time.sleep_ms(5)
 
-            disconnect()
+#                send_alarm (config.host, config.port)
+#                time.sleep(1)
 
-            print('image sent')
-            time.sleep_ms(5)
+                if config.watchdog is True:
+                    wdt_feed()
+
+                print ('send image')
+                time.sleep_ms(5)
+
+                send_mail({'to': 'chrisfigg35@gmail.com', 'subject': 'Message from day camera', 'text': 'check this out'}, {'bytes' : img, 'name' : 'img.jpeg'})
+
+                disconnect()
+
+                config.wifi_state = False
+
+                if config.watchdog is True:
+                    wdt_feed()
+
+                print('image sent and waiting 30 seconds')
+                time.sleep(30)
+
+              # after every picture
+                print('doing a poweron_reset()')
+                time.sleep_ms(5)
+
+                config.poweron_reset.on()
+
+            else:
+                print ('not a valid jpeg file')
+                time.sleep_ms(5)
+
+                print('doing a poweron_reset()')
+                time.sleep_ms(5)
+
+                config.poweron_reset.on()
 
         else:
-            print ('not a valid jpeg file')
-            time.sleep_ms(5)
+            print('looping')
+            time.sleep_ms(10)
 
-            machine.reset()
+            if config.watchdog is True:
+                wdt_feed()
 
-  # end of while loop
-  
-            
+
 if __name__ == '__main__':
     main()
