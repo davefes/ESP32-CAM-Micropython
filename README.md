@@ -9,4 +9,4 @@ You need to do a system reset at the start, if doing a CTRL-C or the camera will
 
 Found a camera.init() that waits for completion. https://github.com/shariltumin/esp32-cam-micropython-2022/blob/main/webcam.py
 
-I also found that some cameras need a full poweron_reset to stop `camera probe fails`  See ESP32_poweron.pdf
+I also found that some cameras need a full poweron_reset to stop `camera probe fails`  See ESP32_CAM_poweron.pdf
