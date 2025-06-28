@@ -111,6 +111,9 @@ for i in range(5):
     else:
         time.sleep(1)
 else:
+    # probably safer to the following before any resets
+    camera.deinit()
+
     print('Timeout, doing a poweron_reset()')
     time.sleep_ms(5)
 
