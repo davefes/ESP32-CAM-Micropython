@@ -26,7 +26,7 @@
 # - take two unwanted pictures, wait a total of 100ms
 #   and then take the real picture
 
-# 14 Oct 2024 D. Festing
+# 28 June 2025 D. Festing
 
 
 from machine import Pin
