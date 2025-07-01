@@ -13,6 +13,6 @@ Probably safer to do a `camera.deinit()` on a failed `camera.init()`, see `main.
 I also found that some cameras need a full poweron_reset to stop `camera probe fails`  See ESP32_CAM_poweron.pdf
 
 Be aware that GPIO2, GPIO4, GPIO13, GPIO14 and GPIO15 on boards that have a SD card feature, may be 47K pullups on them.  
-My comment about GPIO2 is probably incorrect.  If a pull-down was really required then the board would have one.  According to `esp32-wroom-32_datasheet_en.pdf` see Strapping pins on page 10, putting an external pull-down should not change ESP32 boot behaviour.
+My comment about GPIO2 is probably incorrect.  If a pull-down was really required then the board would have one.  According to `esp32-wroom-32_datasheet_en.pdf` see Strapping pins on page 10, putting an external pull-down should not change ESP32 boot behaviour.  The 1K is to ensure that the BC547 is off because of a 47K pull-up on pin2. HS2_DATA2.
 
 After a lot of grief using TSOP4136 I changed to TSSP4038, which are for light barrier applications.
