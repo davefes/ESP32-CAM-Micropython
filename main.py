@@ -200,7 +200,7 @@ def main():
                 print ('send image')
                 time.sleep_ms(5)
 
-                send_mail({'to': 'chrisfigg35@gmail.com', 'subject': 'Message from day camera', 'text': 'check this out'}, {'bytes' : img, 'name' : 'img.jpeg'})
+                send_mail({'to': 'xyz@gmail.com', 'subject': 'Message from camera', 'text': 'check this out'}, {'bytes' : img, 'name' : 'img.jpeg'})
 
                 disconnect()
 
