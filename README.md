@@ -10,7 +10,7 @@ You need to do a system reset at the start, if doing a CTRL-C or the camera may 
 Found a camera.init() that waits for completion. https://github.com/shariltumin/esp32-cam-micropython-2022/blob/main/webcam.py
 Probably safer to do a `camera.deinit()` on a failed `camera.init()`, see `main.py`
 
-I also found that some cameras need a full poweron_reset to stop `camera probe fails`  See ESP32_CAM_poweron.pdf
+I also found that some cameras need a full poweron_reset to stop `camera probe fails`.  One camera did not like doing poweron_reset with the 5V supply to the camera. Changed to toggling the EN GPIO.  See ESP32_CAM_poweron_v2.pdf  Be aware that toggling EN wipes `RTC.memory()` on the ESP32-Generic.  I couldn't get RTC.memory() to work on the ESP32-CAM, so I have no idea if toggling EN is a problem. 
 
 Be aware that GPIO2, GPIO4, GPIO13, GPIO14 and GPIO15 on boards that have a SD card feature, may be 47K pullups on them.  
 My comment about GPIO2 is probably incorrect.  If a pull-down was really required then the board would have one.  According to `esp32-wroom-32_datasheet_en.pdf` see Strapping pins on page 10, putting an external pull-down should not change ESP32 boot behaviour.  The 1K is to ensure that the BC547 is off because of a 47K pull-up on pin2. HS2_DATA2.
