@@ -5,7 +5,7 @@ This project uses version esp32-cam-micropython-2022/ at: https://github.com/sha
 
 Taking a good snapshot proved to be quite difficult until I found this thread: https://github.com/espressif/esp32-camera/issues/314 and down near the bottom it was suggested to take 5-10 frames ignoring the first 4 or 9.
  
-You need to do a system reset at the start, if doing a CTRL-C or the camera will MAY be properly initialised.
+You need to do a system reset at the start, if doing a CTRL-C or the camera may NOT be properly initialised.
 
 Found a camera.init() that waits for completion. https://github.com/shariltumin/esp32-cam-micropython-2022/blob/main/webcam.py
 Probably safer to do a `camera.deinit()` on a failed `camera.init()`, see `main.py`
